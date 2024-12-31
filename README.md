@@ -9,7 +9,7 @@
 
 **CosyVoice 2.0** has been released! Compared to version 1.0, the new version offers more accurate, more stable, faster, and better speech generation capabilities.
 ### Multilingual
-- **Support Language**: Chinese, English, Japanese, Korean, Chinese dialects (Cantonese, Sichuanese, Shanghainese, Tianjinese, Wuhanese, etc.)
+- **Supported Language**: Chinese, English, Japanese, Korean, Chinese dialects (Cantonese, Sichuanese, Shanghainese, Tianjinese, Wuhanese, etc.)
 - **Crosslingual & Mixlingual**：Support zero-shot voice cloning for cross-lingual and code-switching scenarios.
 ### Ultra-Low Latency
 - **Bidirectional Streaming Support**: CosyVoice 2.0 integrates offline and streaming modeling technologies.
@@ -43,7 +43,7 @@
 - [x] 2024/07
 
     - [x] Flow matching training support
-    - [x] WeTextProcessing support when ttsfrd is not avaliable
+    - [x] WeTextProcessing support when ttsfrd is not available
     - [x] Fastapi server and client
 
 
@@ -104,7 +104,7 @@ git clone https://www.modelscope.cn/iic/CosyVoice-300M-Instruct.git pretrained_m
 git clone https://www.modelscope.cn/iic/CosyVoice-ttsfrd.git pretrained_models/CosyVoice-ttsfrd
 ```
 
-Optionaly, you can unzip `ttsfrd` resouce and install `ttsfrd` package for better text normalization performance.
+Optionally, you can unzip `ttsfrd` resouce and install `ttsfrd` package for better text normalization performance.
 
 Notice that this step is not necessary. If you do not install `ttsfrd` package, we will use WeTextProcessing by default.
 
@@ -121,13 +121,10 @@ We strongly recommend using `CosyVoice2-0.5B` for better performance.
 For zero_shot/cross_lingual inference, please use `CosyVoice-300M` model.
 For sft inference, please use `CosyVoice-300M-SFT` model.
 For instruct inference, please use `CosyVoice-300M-Instruct` model.
-First, add `third_party/Matcha-TTS` to your `PYTHONPATH`.
-
-``` sh
-export PYTHONPATH=third_party/Matcha-TTS
-```
 
 ``` python
+import sys
+sys.path.append('third_party/Matcha-TTS')
 from cosyvoice.cli.cosyvoice import CosyVoice, CosyVoice2
 from cosyvoice.utils.file_utils import load_wav
 import torchaudio
@@ -156,12 +153,12 @@ for i, j in enumerate(cosyvoice.inference_instruct2('收到好友从远方寄来
 ```python
 cosyvoice = CosyVoice('pretrained_models/CosyVoice-300M-SFT', load_jit=True, load_onnx=False, fp16=True)
 # sft usage
-print(cosyvoice.list_avaliable_spks())
+print(cosyvoice.list_available_spks())
 # change stream=True for chunk stream inference
 for i, j in enumerate(cosyvoice.inference_sft('你好，我是通义生成式语音大模型，请问有什么可以帮您的吗？', '中文女', stream=False)):
     torchaudio.save('sft_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
 
-cosyvoice = CosyVoice('pretrained_models/CosyVoice-300M-25Hz') # or change to pretrained_models/CosyVoice-300M for 50Hz inference
+cosyvoice = CosyVoice('pretrained_models/CosyVoice-300M') # or change to pretrained_models/CosyVoice-300M-25Hz for 25Hz inference
 # zero_shot usage, <|zh|><|en|><|jp|><|yue|><|ko|> for Chinese/English/Japanese/Cantonese/Korean
 prompt_speech_16k = load_wav('zero_shot_prompt.wav', 16000)
 for i, j in enumerate(cosyvoice.inference_zero_shot('收到好友从远方寄来的生日礼物，那份意外的惊喜与深深的祝福让我心中充满了甜蜜的快乐，笑容如花儿般绽放。', '希望你以后能够做的比我还好呦。', prompt_speech_16k, stream=False)):
